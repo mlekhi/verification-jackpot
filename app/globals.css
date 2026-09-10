@@ -1,26 +1,182 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  color-scheme: light;
+  --background: #f4eee5;
   --foreground: #171717;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-sans);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide-in { animation: slide-in 0.35s ease-out both; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  40% { transform: translateX(7px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.shake { animation: shake 0.4s ease-in-out; }
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+.pop { animation: pop 0.4s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+/* --- a flat cream ground; the panels carry themselves on shadow --- */
+.stage-bg {
+  background-color: #f4eee5;
+}
+
+/* --- the slot deck, in glass --- */
+.stage {
+  position: relative;
+  z-index: 10;
+}
+
+.deck {
+  display: flex;
+  gap: 10px;
+}
+
+.cell {
+  position: relative;
+  width: 64px;
+  height: 88px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.75) inset,
+    0 -1px 1px rgba(255, 255, 255, 0.35) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 8px 20px -6px rgba(74, 30, 24, 0.24),
+    0 24px 44px -20px rgba(74, 30, 24, 0.32);
+  transition: box-shadow 0.35s ease;
+}
+
+/* the blurred surface sits behind the reel, never as its ancestor */
+.pane {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  transition: background 0.35s ease;
+}
+
+/* clips the spinning strip */
+.window {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* the bright specular edge that makes glass read as glass */
+.cell .rim {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(to top, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 26%);
+}
+
+.cell-error .pane { background: rgba(255, 226, 226, 0.4); }
+
+.cell-error {
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.7) inset,
+    0 0 0 1px rgba(220, 38, 38, 0.35),
+    0 10px 22px -8px rgba(120, 20, 20, 0.25);
+}
+
+/* the win: the glass just brightens, nothing moves */
+.jackpot-cell .pane { background: rgba(255, 255, 255, 0.82); }
+
+.jackpot-cell {
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 0 22px 3px rgba(200, 16, 46, 0.11),
+    0 8px 20px -6px rgba(74, 30, 24, 0.24),
+    0 24px 44px -20px rgba(74, 30, 24, 0.32);
+}
+
+/* the focused box carries the cursor, so the caret itself is hidden */
+.cell-focus .pane { background: rgba(255, 255, 255, 0.72); }
+
+.cell-focus {
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.9) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 16px 2px rgba(200, 16, 46, 0.13),
+    0 8px 20px -6px rgba(74, 30, 24, 0.24),
+    0 24px 44px -20px rgba(74, 30, 24, 0.32);
+}
+
+/* small glass chip naming what the boxes are for */
+.chip {
+  position: relative;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* trailing letter-spacing pads the right edge, so trim it back */
+  padding: 8px 13px 8px 16px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #4a2b23;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.8) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.45),
+    0 6px 14px -8px rgba(74, 30, 24, 0.3);
+}
+
+.chip-win {
+  color: #1c1917;
+  letter-spacing: 0.2em;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.chip-win:hover { background: rgba(255, 255, 255, 0.85); }
+.chip-win:active { transform: scale(0.98); }
+
+/* each box gives a small bounce as its diamond locks in */
+@keyframes lock {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(3px); }
+  70% { transform: translateY(-1.5px); }
+  100% { transform: translateY(0); }
+}
+
+.cell-lock { animation: lock 0.32s cubic-bezier(0.3, 0.7, 0.4, 1) both; }
+
