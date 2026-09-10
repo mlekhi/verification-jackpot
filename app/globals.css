@@ -65,8 +65,7 @@ body {
     0 1px 1px rgba(255, 255, 255, 0.75) inset,
     0 -1px 1px rgba(255, 255, 255, 0.35) inset,
     0 0 0 1px rgba(255, 255, 255, 0.4),
-    0 8px 20px -6px rgba(74, 30, 24, 0.24),
-    0 24px 44px -20px rgba(74, 30, 24, 0.32);
+    0 1px 2px rgba(74, 30, 24, 0.05);
   transition: box-shadow 0.35s ease;
 }
 
@@ -109,7 +108,7 @@ body {
   box-shadow:
     0 1px 1px rgba(255, 255, 255, 0.7) inset,
     0 0 0 1px rgba(220, 38, 38, 0.35),
-    0 10px 22px -8px rgba(120, 20, 20, 0.25);
+    0 1px 2px rgba(120, 20, 20, 0.06);
 }
 
 /* the win: the glass just brightens, nothing moves */
@@ -120,8 +119,20 @@ body {
     0 1px 1px rgba(255, 255, 255, 0.9) inset,
     0 0 0 1px rgba(255, 255, 255, 0.7),
     0 0 22px 3px rgba(200, 16, 46, 0.11),
-    0 8px 20px -6px rgba(74, 30, 24, 0.24),
-    0 24px 44px -20px rgba(74, 30, 24, 0.32);
+    0 1px 2px rgba(74, 30, 24, 0.05);
+}
+
+/* the win travels along the row rather than switching on all at once */
+@keyframes ripple {
+  0% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+  60% { transform: translateY(1.5px); }
+  100% { transform: translateY(0); }
+}
+
+.jackpot-cell {
+  animation: ripple 0.5s cubic-bezier(0.25, 0.8, 0.35, 1) both;
+  animation-delay: calc(var(--i) * 65ms);
 }
 
 /* the focused box carries the cursor, so the caret itself is hidden */
@@ -132,8 +143,8 @@ body {
     0 1px 1px rgba(255, 255, 255, 0.9) inset,
     0 0 0 1px rgba(255, 255, 255, 0.55),
     0 0 16px 2px rgba(200, 16, 46, 0.13),
-    0 8px 20px -6px rgba(74, 30, 24, 0.24),
-    0 24px 44px -20px rgba(74, 30, 24, 0.32);
+    0 6px 14px -6px rgba(74, 30, 24, 0.18),
+    0 16px 28px -18px rgba(74, 30, 24, 0.22);
 }
 
 /* small glass chip naming what the boxes are for */

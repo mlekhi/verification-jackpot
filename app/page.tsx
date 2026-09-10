@@ -100,8 +100,9 @@ export default function Home() {
               className={`cell ${error ? "cell-error" : ""} ${
                 phase === "jackpot" ? "jackpot-cell" : ""
               } ${phase === "entry" && focused === i ? "cell-focus" : ""} ${
-                landed.includes(i) ? "cell-lock" : ""
+                landed.includes(i) && phase !== "jackpot" ? "cell-lock" : ""
               }`}
+              style={{ "--i": i } as React.CSSProperties}
             >
               <span className="pane" aria-hidden />
               {phase === "spinning" || phase === "jackpot" ? (
