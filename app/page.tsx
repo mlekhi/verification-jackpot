@@ -210,6 +210,7 @@ const GLYPHS: Record<string, React.ReactElement> = {
 
 function Reel({ index, onDone }: { index: number; onDone?: () => void }) {
   const [spun, setSpun] = useState(false);
+  const [blurred, setBlurred] = useState(false);
   // the loop never shows the diamond — it turns up only as the landing symbol
   const strip = [...Array(CYCLES).fill(0).flatMap(() => SYMBOLS), WIN];
   const last = strip.length - 1;
@@ -225,13 +226,19 @@ function Reel({ index, onDone }: { index: number; onDone?: () => void }) {
   };
 
   useEffect(() => {
-    const t = requestAnimationFrame(() => setSpun(true));
+    const t = requestAnimationFrame(() => {
+      setSpun(true);
+      setBlurred(true);
+    });
+    // let the smear fade out well before the reel stops
+    const clear = setTimeout(() => setBlurred(false), duration * 1000 * 0.45);
     // the ease-out has a long slow tail, so the diamond reads as "arrived"
     // well before the transition formally ends — bounce on that moment instead
     const bounce = setTimeout(land, duration * 1000 - 450);
     return () => {
       cancelAnimationFrame(t);
       clearTimeout(bounce);
+      clearTimeout(clear);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -246,7 +253,13 @@ function Reel({ index, onDone }: { index: number; onDone?: () => void }) {
       }}
       style={{
         transform: `translateY(${spun ? -last * CELL : 0}px)`,
-        transition: `transform ${duration}s cubic-bezier(0.16, 0.9, 0.2, 1)`,
+        // the blur is heaviest while the reel is at speed and clears as it
+        // settles, so the symbols smear vertically like a real drum
+        filter: `blur(${blurred ? 3.5 : 0}px)`,
+        transition: [
+          `transform ${duration}s cubic-bezier(0.16, 0.9, 0.2, 1)`,
+          `filter ${duration * 0.55}s ease-out`,
+        ].join(", "),
       }}
     >
       {strip.map((n, k) => (
