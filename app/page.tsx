@@ -24,7 +24,9 @@ export default function Home() {
   useEffect(() => {
     if (phase !== "entry" || entered.length !== 6) return;
     if (entered === CODE) {
-      setPhase("spinning");
+      // hold long enough for the sixth digit to actually be seen
+      const go = setTimeout(() => setPhase("spinning"), 420);
+      return () => clearTimeout(go);
     } else {
       setError(true);
       const t = setTimeout(() => {
