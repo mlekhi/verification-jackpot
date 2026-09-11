@@ -96,11 +96,13 @@ body {
 }
 
 /* the focused field is the only lit one */
+/* their focus recipe — 2px gap, 2px blue — drawn as an outline so the
+   corners scale with the radius and neighbouring tiles cannot cover it */
 .cell-focus {
   background: var(--ds-gray-100);
-  box-shadow:
-    0 0 0 2px var(--ds-background-100),
-    0 0 0 4px var(--ds-blue-900);
+  box-shadow: 0 0 0 1px hsl(0, 0%, 12%);
+  outline: 2px solid var(--ds-blue-900);
+  outline-offset: 2px;
 }
 
 /* the win: a specular sweep travels across each symbol in turn */
