@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 const CODE = "123456";
 const CELL = 88; // reel cell height in px, must match the window height
 const CYCLES = 9; // how many symbol loops before landing
-const WIN = "diamond"; // every reel lands here, and it appears nowhere else
+const WIN = "triangle"; // every reel lands here, and it appears nowhere else
 const SYMBOLS = ["cherry", "lemon", "bell", "star", "seven"];
 
 type Phase = "entry" | "spinning" | "jackpot";
@@ -63,7 +63,7 @@ export default function Home() {
   };
 
   return (
-    <main className="stage-bg relative flex min-h-dvh flex-col items-center justify-center gap-10 overflow-hidden p-6 text-neutral-900">
+    <main className="stage-bg relative flex min-h-dvh flex-col items-center justify-center gap-10 overflow-hidden p-6 text-[#ededed]">
       {/* one chip above the deck: says what the boxes are, then says you won */}
       {phase === "jackpot" ? (
         <button
@@ -74,7 +74,7 @@ export default function Home() {
           }}
           className="chip chip-win pop"
         >
-          <Glyph name="diamond" size={14} />
+          <Glyph name="triangle" size={12} />
           jackpot
         </button>
       ) : (
@@ -106,7 +106,6 @@ export default function Home() {
               }`}
               style={{ "--i": i } as React.CSSProperties}
             >
-              <span className="pane" aria-hidden />
               {phase === "spinning" || phase === "jackpot" ? (
                 <span className="window">
                   <Reel
@@ -131,10 +130,9 @@ export default function Home() {
                   inputMode="numeric"
                   maxLength={6}
                   aria-label={`digit ${i + 1}`}
-                  className="relative z-20 h-full w-full bg-transparent text-center text-3xl font-semibold tabular-nums text-neutral-900 caret-transparent outline-none"
+                  className="relative z-20 h-full w-full bg-transparent text-center text-3xl font-medium tabular-nums text-[#ededed] caret-transparent outline-none"
                 />
               )}
-              <span className="rim" aria-hidden />
               {/* drum curve + gloss, painted over whatever is in the window */}
             </div>
           ))}
@@ -146,10 +144,11 @@ export default function Home() {
 }
 
 // vintage reel print: heavy black outline, flat red/yellow, white specular pops
-const LINE = "#171210";
-const RED = "#c8102e";
-const YELLOW = "#f0b323";
-const PAPER = "#fffdf6";
+const LINE = "#a1a1a1"; // gray-700-ish for the losing symbols
+const RED = "#616161";
+const YELLOW = "#8f8f8f";
+const PAPER = "#0a0a0a";
+const ACCENT = "#0070f3";
 
 function Glyph({ name, size = 34 }: { name: string; size?: number }) {
   return (
@@ -158,7 +157,8 @@ function Glyph({ name, size = 34 }: { name: string; size?: number }) {
       width={size}
       height={size}
       stroke={LINE}
-      strokeWidth="1.5"
+      fill="none"
+      strokeWidth="1.25"
       strokeLinejoin="round"
       strokeLinecap="round"
       aria-hidden
@@ -202,9 +202,10 @@ const GLYPHS: Record<string, React.ReactElement> = {
       <path d="M7.4 5.7h4.4" fill="none" stroke={PAPER} strokeWidth="1.3" />
     </>
   ),
+  triangle: <path d="M12 1 24 22H0Z" fill="#ededed" stroke="none" />,
   diamond: (
     <>
-      <path d="M6.6 3.9h10.8l4 4.9L12 20.3 2.6 8.8Z" fill={RED} />
+      <path d="M6.6 3.9h10.8l4 4.9L12 20.3 2.6 8.8Z" fill={ACCENT} />
       <path d="M6.6 3.9 9.2 8.8 12 3.9l2.8 4.9 2.6-4.9M2.6 8.8h18.8M9.2 8.8 12 20.3l2.8-11.5" fill="none" strokeWidth="1.1" />
       <path d="M4.6 7.2 6.4 5.3" fill="none" stroke={PAPER} strokeWidth="1.2" />
     </>

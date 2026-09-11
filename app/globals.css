@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: light;
-  --background: #f4eee5;
-  --foreground: #171717;
+  color-scheme: dark;
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 93%);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 body {
@@ -39,12 +40,25 @@ body {
 }
 .pop { animation: pop 0.4s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
 
-/* --- a flat cream ground; the panels carry themselves on shadow --- */
-.stage-bg {
-  background-color: #f4eee5;
+/* --- Geist dark scale, values taken from vercel.com/geist/colors --- */
+:root {
+  --ds-background-100: hsl(0, 0%, 4%);
+  --ds-background-200: hsl(0, 0%, 0%);
+  --ds-gray-100: hsl(0, 0%, 10%);
+  --ds-gray-200: hsl(0, 0%, 12%);
+  --ds-gray-400: hsl(0, 0%, 18%);
+  --ds-gray-600: hsl(0, 0%, 53%);
+  --ds-gray-900: hsl(0, 0%, 63%);
+  --ds-gray-1000: hsl(0, 0%, 93%);
+  --ds-blue-700: oklch(57.61% 0.2321 258.23);
+  --ds-blue-900: oklch(71.7% 0.1648 250.794);
+  --ds-red-900: oklch(69.96% 0.2136 22.03);
 }
 
-/* --- the slot deck, in glass --- */
+.stage-bg {
+  background-color: var(--ds-background-200);
+}
+
 .stage {
   position: relative;
   z-index: 10;
@@ -52,33 +66,19 @@ body {
 
 .deck {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
+/* component background on a default border — colors 1 and 4 */
 .cell {
   position: relative;
   width: 64px;
   height: 88px;
-  border-radius: 20px;
+  border-radius: 8px;
   text-align: center;
-  box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.75) inset,
-    0 -1px 1px rgba(255, 255, 255, 0.35) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.4),
-    0 1px 2px rgba(74, 30, 24, 0.05);
-  transition: box-shadow 0.35s ease;
-}
-
-/* the blurred surface sits behind the reel, never as its ancestor */
-.pane {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  transition: background 0.35s ease;
+  background: var(--ds-background-100);
+  box-shadow: 0 0 0 1px var(--ds-gray-400);
+  transition: box-shadow 0.15s ease, background 0.15s ease;
 }
 
 /* clips the spinning strip */
@@ -90,39 +90,19 @@ body {
   border-radius: inherit;
 }
 
-/* the bright specular edge that makes glass read as glass */
-.cell .rim {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(to top, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 26%);
-}
-
-.cell-error .pane { background: rgba(255, 226, 226, 0.4); }
-
 .cell-error {
-  box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.7) inset,
-    0 0 0 1px rgba(220, 38, 38, 0.35),
-    0 1px 2px rgba(120, 20, 20, 0.06);
+  box-shadow: 0 0 0 1px var(--ds-red-900);
 }
 
-/* the win: the glass just brightens, nothing moves */
-.jackpot-cell .pane { background: rgba(255, 255, 255, 0.82); }
-
-.jackpot-cell {
+/* the focused field is the only lit one */
+.cell-focus {
+  background: var(--ds-gray-100);
   box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.7),
-    0 0 22px 3px rgba(200, 16, 46, 0.11),
-    0 1px 2px rgba(74, 30, 24, 0.05);
+    0 0 0 1px var(--ds-blue-700),
+    0 0 0 4px color-mix(in oklch, var(--ds-blue-700) 22%, transparent);
 }
 
-/* the win travels along the row rather than switching on all at once */
+/* the win: the border picks up blue, the row ripples through */
 @keyframes ripple {
   0% { transform: translateY(0); }
   30% { transform: translateY(-5px); }
@@ -131,23 +111,14 @@ body {
 }
 
 .jackpot-cell {
+  box-shadow:
+    0 0 0 1px var(--ds-blue-700),
+    0 0 22px -4px color-mix(in oklch, var(--ds-blue-900) 45%, transparent);
   animation: ripple 0.5s cubic-bezier(0.25, 0.8, 0.35, 1) both;
   animation-delay: calc(var(--i) * 65ms);
 }
 
-/* the focused box carries the cursor, so the caret itself is hidden */
-.cell-focus .pane { background: rgba(255, 255, 255, 0.72); }
-
-.cell-focus {
-  box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.9) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.55),
-    0 0 16px 2px rgba(200, 16, 46, 0.13),
-    0 6px 14px -6px rgba(74, 30, 24, 0.18),
-    0 16px 28px -18px rgba(74, 30, 24, 0.22);
-}
-
-/* small glass chip naming what the boxes are for */
+/* label above the deck, in the mono voice */
 .chip {
   position: relative;
   z-index: 10;
@@ -155,33 +126,24 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  /* trailing letter-spacing pads the right edge, so trim it back */
-  padding: 8px 13px 8px 16px;
-  border-radius: 999px;
+  padding: 0;
+  font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 11px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #4a2b23;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  box-shadow:
-    0 1px 1px rgba(255, 255, 255, 0.8) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.45),
-    0 6px 14px -8px rgba(74, 30, 24, 0.3);
+  color: var(--ds-gray-900);
+  background: none;
 }
 
 .chip-win {
-  color: #1c1917;
-  letter-spacing: 0.2em;
-  background: rgba(255, 255, 255, 0.7);
+  color: var(--ds-gray-1000);
   cursor: pointer;
+  transition: color 0.15s ease;
 }
 
-.chip-win:hover { background: rgba(255, 255, 255, 0.85); }
-.chip-win:active { transform: scale(0.98); }
+.chip-win:hover { color: #fff; }
 
-/* each box gives a small bounce as its diamond locks in */
+/* each box settles as its symbol locks in */
 @keyframes lock {
   0% { transform: translateY(0); }
   35% { transform: translateY(3px); }
@@ -190,4 +152,3 @@ body {
 }
 
 .cell-lock { animation: lock 0.32s cubic-bezier(0.3, 0.7, 0.4, 1) both; }
-
