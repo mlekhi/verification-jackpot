@@ -47,6 +47,7 @@ body {
   --ds-gray-100: hsl(0, 0%, 10%);
   --ds-gray-200: hsl(0, 0%, 12%);
   --ds-gray-400: hsl(0, 0%, 18%);
+  --geist-radius: 6px; /* their radius token */
   --ds-gray-600: hsl(0, 0%, 53%);
   --ds-gray-900: hsl(0, 0%, 63%);
   --ds-gray-1000: hsl(0, 0%, 93%);
@@ -66,18 +67,18 @@ body {
 
 .deck {
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }
 
 /* component background on a default border — colors 1 and 4 */
 .cell {
   position: relative;
-  width: 64px;
-  height: 88px;
-  border-radius: 8px;
+  width: 96px;
+  height: 132px;
+  border-radius: 10px;
   text-align: center;
   background: var(--ds-background-100);
-  box-shadow: 0 0 0 1px var(--ds-gray-400);
+  box-shadow: 0 0 0 1px hsl(0, 0%, 12%);
   transition: box-shadow 0.15s ease, background 0.15s ease;
 }
 
@@ -98,24 +99,53 @@ body {
 .cell-focus {
   background: var(--ds-gray-100);
   box-shadow:
-    0 0 0 1px var(--ds-blue-700),
-    0 0 0 4px color-mix(in oklch, var(--ds-blue-700) 22%, transparent);
+    0 0 0 2px var(--ds-background-100),
+    0 0 0 4px var(--ds-blue-900);
 }
 
-/* the win: the border picks up blue, the row ripples through */
-@keyframes ripple {
-  0% { transform: translateY(0); }
-  30% { transform: translateY(-5px); }
-  60% { transform: translateY(1.5px); }
-  100% { transform: translateY(0); }
+/* the win: a specular sweep travels across each symbol in turn */
+.shine {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  /* clipped to the symbol's silhouette, so the sweep never touches the tile */
+  --symbol: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 1 24 22H0Z' fill='%23fff'/></svg>");
+  mask-image: var(--symbol);
+  mask-size: 52px 52px;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  -webkit-mask-image: var(--symbol);
+  -webkit-mask-size: 52px 52px;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
 }
 
-.jackpot-cell {
-  box-shadow:
-    0 0 0 1px var(--ds-blue-700),
-    0 0 22px -4px color-mix(in oklch, var(--ds-blue-900) 45%, transparent);
-  animation: ripple 0.5s cubic-bezier(0.25, 0.8, 0.35, 1) both;
-  animation-delay: calc(var(--i) * 65ms);
+.shine::after {
+  content: "";
+  position: absolute;
+  top: -25%;
+  bottom: -25%;
+  left: 0;
+  width: 75%;
+  /* one soft highlight, no hard edges — the symbol sits a step below white
+     so the band has somewhere to travel to */
+  background: linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0) 28%,
+    rgba(255, 255, 255, 0.95) 50%,
+    rgba(255, 255, 255, 0) 72%
+  );
+  transform: translateX(-140%) skewX(-14deg);
+  animation: shine 1.15s ease-in-out both;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+@keyframes shine {
+  from { transform: translateX(-140%) skewX(-14deg); }
+  to { transform: translateX(240%) skewX(-14deg); }
 }
 
 /* label above the deck, in the mono voice */
@@ -127,16 +157,15 @@ body {
   justify-content: center;
   gap: 8px;
   padding: 0;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ds-gray-900);
+  font-size: 16px;
+  font-weight: 500;
+  color: hsl(0, 0%, 56%);
   background: none;
 }
 
 .chip-win {
   color: var(--ds-gray-1000);
+  font-weight: 500;
   cursor: pointer;
   transition: color 0.15s ease;
 }

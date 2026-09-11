@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const CODE = "123456";
-const CELL = 88; // reel cell height in px, must match the window height
+const CELL = 132; // reel cell height in px, must match the window height
 const CYCLES = 9; // how many symbol loops before landing
 const WIN = "triangle"; // every reel lands here, and it appears nowhere else
 const SYMBOLS = ["cherry", "lemon", "bell", "star", "seven"];
@@ -63,7 +63,7 @@ export default function Home() {
   };
 
   return (
-    <main className="stage-bg relative flex min-h-dvh flex-col items-center justify-center gap-10 overflow-hidden p-6 text-[#ededed]">
+    <main className="stage-bg relative flex min-h-dvh flex-col items-center justify-center gap-14 overflow-hidden p-6 text-[#ededed]">
       {/* one chip above the deck: says what the boxes are, then says you won */}
       {phase === "jackpot" ? (
         <button
@@ -74,12 +74,21 @@ export default function Home() {
           }}
           className="chip chip-win pop"
         >
-          <Glyph name="triangle" size={12} />
-          jackpot
+          <svg viewBox="0 0 24 24" width={16} height={16} aria-hidden="true">
+            <path
+              d="m4.5 12.5 5 5 10-11"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          Verified
         </button>
       ) : (
         <div className="chip">
-          <svg viewBox="0 0 24 24" width={13} height={13} aria-hidden>
+          <svg viewBox="0 0 24 24" width={16} height={16} aria-hidden>
             <path
               d="M8 10V7.5a4 4 0 0 1 8 0V10"
               fill="none"
@@ -89,7 +98,7 @@ export default function Home() {
             />
             <rect x="4.8" y="10" width="14.4" height="9.6" rx="2.6" fill="currentColor" />
           </svg>
-          verification code
+          Verification code
         </div>
       )}
 
@@ -130,10 +139,10 @@ export default function Home() {
                   inputMode="numeric"
                   maxLength={6}
                   aria-label={`digit ${i + 1}`}
-                  className="relative z-20 h-full w-full bg-transparent text-center text-3xl font-medium tabular-nums text-[#ededed] caret-transparent outline-none"
+                  className="relative z-20 h-full w-full bg-transparent text-center text-5xl font-semibold tracking-[-0.04em] tabular-nums text-[#ededed] caret-transparent outline-none"
                 />
               )}
-              {/* drum curve + gloss, painted over whatever is in the window */}
+              {phase === "jackpot" && <span className="shine" aria-hidden="true" />}
             </div>
           ))}
         </div>
@@ -150,7 +159,7 @@ const YELLOW = "#8f8f8f";
 const PAPER = "#0a0a0a";
 const ACCENT = "#0070f3";
 
-function Glyph({ name, size = 34 }: { name: string; size?: number }) {
+function Glyph({ name, size = 52 }: { name: string; size?: number }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -202,7 +211,7 @@ const GLYPHS: Record<string, React.ReactElement> = {
       <path d="M7.4 5.7h4.4" fill="none" stroke={PAPER} strokeWidth="1.3" />
     </>
   ),
-  triangle: <path d="M12 1 24 22H0Z" fill="#ededed" stroke="none" />,
+  triangle: <path d="M12 1 24 22H0Z" fill="#c4c4c4" stroke="none" />,
   diamond: (
     <>
       <path d="M6.6 3.9h10.8l4 4.9L12 20.3 2.6 8.8Z" fill={ACCENT} />
